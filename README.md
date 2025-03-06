@@ -317,10 +317,10 @@ Todos los errores siguen una estructura consistente:
 {
     "success": false,
     "error": {
-        "code": number,
-        "message": string,
-        "details": string,
-        "errors": array (opcional)
+        "code": "number",
+        "message": "string",
+        "details": "string",
+        "errors": "array (opcional)"
     }
 }
 ```
@@ -417,7 +417,8 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
                 "source": "carrier",
                 "transportMode": "TRUCK",
                 "planned": false
-            },
+            }
+        ]
     }
 }
 ```
