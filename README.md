@@ -268,7 +268,7 @@ Authorization: Bearer <tu-token>
       "error": {
           "code": 401,
           "message": "UNAUTHORIZED",
-          "details": "Un token de autenticación es requerido
+          "details": "Un token de autenticación es requerido"
       }
   }
   ```
