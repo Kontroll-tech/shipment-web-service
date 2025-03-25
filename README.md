@@ -102,15 +102,17 @@ Content-Type: application/json
 {
     "shipmentNumber": "SHIP123456",
     "carrier": "MAEU",
-    "type": "container"
+    "type": "container",
+    "transportMode": "OCEAN"
 }
 ```
 
 | Campo | Tipo | Descripción | Requerido |
 |-------|------|-------------|-----------|
 | shipmentNumber | string | Número de envío, booking o contenedor | Sí |
-| carrier | string | Código del transportista | Sí |
+| carrier | string | Código del transportista | No |
 | type | string | Tipo de envío (booking, mbl, container) | Sí |
+| transportMode | string | Modo de transporte (AIR, OCEAN) | Sí |
 
 #### Response Exitosa (200 OK)
 
@@ -347,7 +349,8 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
 --data-raw '{
     "shipmentNumber": "SHIP123456",
     "carrier": "MAEU",
-    "type": "container"
+    "type": "container",
+    "transportMode": "OCEAN"
 }'
 ```
 
