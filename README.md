@@ -361,7 +361,7 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs...'
 ```
 
-**Respuesta de ejemplo:**
+**Respuesta de ejemplo (Embarque Marítimo):**
 
 ```json
 {
@@ -374,10 +374,10 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
         "carrierCode": "MSK",
         "carrierName": "Maersk Line",
         "createdAt": "2025-02-23 19:30:00",
-        "eta": "2025-02-24 00:30:00",
-        "etd": "2025-02-12 08:48:00",
-        "ata": "2025-02-24 00:30:00",
-        "atd": "2025-02-12 08:48:00",
+        "eta": "2025-02-24T00:30:00",
+        "etd": "2025-02-12T08:48:00",
+        "ata": "2025-02-24T00:30:00",
+        "atd": "2025-02-12T08:48:00",
         "portOfLoading": "Shanghai",
         "portOfDischarge": "Rotterdam",
         "flag": "Panamá",
@@ -425,3 +425,34 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
     }
 }
 ```
+
+### Ejemplo de Obtener Embarque Aéreo por ID
+
+**Respuesta de ejemplo:**
+
+```json
+{
+    "success": true,
+    "data": {
+        "id": "n1IP7703P31ISWDuNchE",
+        "status": "BOOKING_REQUEST",
+        "createdAt": "2025-04-08 11:55:13",
+        "eta": "2025-02-24T00:30:00",
+        "etd": "2025-02-12T08:48:00",
+        "ata": "2025-02-24T00:30:00",
+        "atd": "2025-02-12T08:48:00",
+        "locations": {
+            "Origin": null,
+            "Destination": null
+        },
+        "containers": [],
+        "trackingEvents": [],
+        "transportMode": "Air Transport",
+        "mawb": "TLLU5154957",
+        "hawb": null,
+        "carrierCode": "EMC",
+        "carrierName": "247 Aviation",
+        "airportOfDeparture": null,
+        "airportOfArrival": null
+    }
+}
