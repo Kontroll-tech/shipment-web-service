@@ -111,7 +111,7 @@ Content-Type: application/json
 |-------|------|-------------|-----------|
 | shipmentNumber | string | Número de envío, booking o contenedor | Sí |
 | carrier | string | Código del transportista | No |
-| type | string | Tipo de envío (booking, mbl, container) | Sí |
+| type | string | Tipo de envío (booking, mbl, container) cuando es OCEAN y mawb cuando es AIR | Sí |
 | transportMode | string | Modo de transporte (AIR, OCEAN) | Sí |
 
 #### Response Exitosa (200 OK)
