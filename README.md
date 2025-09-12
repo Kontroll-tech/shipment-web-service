@@ -89,6 +89,10 @@ Authorization: Bearer <tu-token>
 
 **Descripción:** Crea un nuevo envío y configura su seguimiento automático. El servicio verifica la autenticación mediante el token Bearer y extrae el companyId y uid del mismo.
 
+**Validaciones:**
+- **Validación de Fechas:** El sistema valida que las fechas de los milestones (ETA, ETD, ATA, ATD) no sean anteriores a 80 días desde la fecha actual para garantizar la veracidad de la información.
+- **Validación de Ruta:** Los campos opcionales originPort y destinationPort permiten validar que la ruta encontrada coincida con los códigos de país esperados (formato ISO de 2 caracteres).
+
 #### Headers Requeridos
 
 ```
@@ -103,7 +107,9 @@ Content-Type: application/json
     "shipmentNumber": "SHIP123456",
     "carrier": "MAEU",
     "type": "container",
-    "transportMode": "OCEAN"
+    "transportMode": "OCEAN",
+    "originPort": "CO",
+    "destinationPort": "US"
 }
 ```
 
@@ -113,6 +119,8 @@ Content-Type: application/json
 | carrier | string | Código del transportista | No |
 | type | string | Tipo de envío (booking, mbl, container) cuando es OCEAN y mawb cuando es AIR | Sí |
 | transportMode | string | Modo de transporte (AIR, OCEAN) | Sí |
+| originPort | string | Código de país de origen (2 caracteres ISO) - Opcional para embarques marítimos. Se usa para validar la ruta | No |
+| destinationPort | string | Código de país de destino (2 caracteres ISO) - Opcional para embarques marítimos. Se usa para validar la ruta | No |
 
 #### Response Exitosa (200 OK)
 
@@ -134,6 +142,18 @@ Content-Type: application/json
       "error": {
           "code": 400,
           "message": "MISSING_PARAMS"
+      }
+  }
+  ```
+
+- **400 Bad Request** - Información de tracking demasiado antigua
+  ```json
+  {
+      "success": false,
+      "error": {
+          "code": 400,
+          "message": "OUTDATED_INFORMATION",
+          "details": "La información de tracking encontrada es demasiado antigua (más de 80 días). Por favor verifique que la información enviada sea correcta y considere proporcionar la naviera para mayor precisión en la búsqueda."
       }
   }
   ```
@@ -350,7 +370,9 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
     "shipmentNumber": "SHIP123456",
     "carrier": "MAEU",
     "type": "container",
-    "transportMode": "OCEAN"
+    "transportMode": "OCEAN",
+    "originPort": "CO",
+    "destinationPort": "US"
 }'
 ```
 
@@ -437,7 +459,7 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
         "id": "n1IP7703P31ISWDuNchE",
         "status": "BOOKING_REQUEST",
         "createdAt": "2025-04-08 11:55:13",
-        "eta": "2025-02-24T00:30:00",
+       "eta": "2025-02-24T00:30:00",
         "etd": "2025-02-12T08:48:00",
         "ata": "2025-02-24T00:30:00",
         "atd": "2025-02-12T08:48:00",
