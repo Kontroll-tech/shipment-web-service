@@ -1,25 +1,36 @@
-# Documentación API Kila Platform
+# Kila Platform API Documentation
 
-## Índice
-1. [Introducción](#introducción)
-2. [Autenticación](#autenticación)
+> **Documentation available in multiple languages:**
+>
+> - 🇬🇧 [English](README.md) (Main Documentation)
+> - 🇪🇸 [Español](README.es.md) (Documentación en español)
+>
+> **Quick Start Guides:**
+> - [English Quick Guide](docs/en/API-Guide.md)
+> - [Guía Rápida en Español](docs/es/Guía-API.md)
+
+---
+
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Authentication](#authentication)
 3. [Endpoints](#endpoints)
    - [Login](#login)
-   - [Crear Envío con Tracking](#crear-envío-con-tracking)
-   - [Obtener Embarque por ID](#obtener-embarque-por-id)
-4. [Manejo de Errores](#manejo-de-errores)
-5. [Ejemplos](#ejemplos)
+   - [Create Shipment with Tracking](#create-shipment-with-tracking)
+   - [Get Shipment by ID](#get-shipment-by-id)
+4. [Error Handling](#error-handling)
+5. [Examples](#examples)
 
-## Introducción
+## Introduction
 
-Esta API proporciona servicios para la gestión de envíos y tracking en la plataforma Kila. Todos los endpoints devuelven respuestas en formato JSON y utilizan los códigos de estado HTTP estándar.
+This API provides services for managing shipments and tracking on the Kila platform. All endpoints return responses in JSON format and use standard HTTP status codes.
 
-## Autenticación
+## Authentication
 
-La API utiliza autenticación basada en tokens JWT. Para la mayoría de los endpoints, se requiere incluir el token en el header de autorización:
+The API uses JWT token-based authentication. For most endpoints, you need to include the token in the authorization header:
 
 ```
-Authorization: Bearer <tu-token>
+Authorization: Bearer <your-token>
 ```
 
 ## Endpoints
@@ -28,20 +39,20 @@ Authorization: Bearer <tu-token>
 
 **Endpoint:** `/login`
 
-**Método:** `POST`
+**Method:** `POST`
 
-**Descripción:** Autentica a un usuario utilizando email y contraseña.
+**Description:** Authenticates a user using email and password.
 
 #### Request
 
 ```json
 {
-    "email": "usuario@ejemplo.com",
-    "password": "contraseña123"
+    "email": "user@example.com",
+    "password": "password123"
 }
 ```
 
-#### Response Exitosa (200 OK)
+#### Successful Response (200 OK)
 
 ```json
 {
@@ -49,7 +60,7 @@ Authorization: Bearer <tu-token>
 }
 ```
 
-#### Errores Posibles
+#### Possible Errors
 
 - **400 Bad Request**
   ```json
@@ -79,24 +90,24 @@ Authorization: Bearer <tu-token>
   }
   ```
 
-### Crear Envío con Tracking
+### Create Shipment with Tracking
 
 **Endpoint:** `/createShipmentWithTracking`
 
-**Método:** `POST`
+**Method:** `POST`
 
-**Autenticación requerida:** Sí
+**Authentication required:** Yes
 
-**Descripción:** Crea un nuevo envío y configura su seguimiento automático. El servicio verifica la autenticación mediante el token Bearer y extrae el companyId y uid del mismo.
+**Description:** Creates a new shipment and configures automatic tracking. The service verifies authentication using the Bearer token and extracts the companyId and uid from it.
 
-**Validaciones:**
-- **Validación de Fechas:** El sistema valida que las fechas de los milestones (ETA, ETD, ATA, ATD) no sean anteriores a 80 días desde la fecha actual para garantizar la veracidad de la información.
-- **Validación de Ruta:** Los campos opcionales originPort y destinationPort permiten validar que la ruta encontrada coincida con los códigos de país esperados (formato ISO de 2 caracteres).
+**Validations:**
+- **Date Validation:** The system validates that milestone dates (ETA, ETD, ATA, ATD) are not older than 80 days from the current date to ensure data accuracy.
+- **Route Validation:** The optional originPort and destinationPort fields allow validation that the found route matches the expected country codes (ISO 2-character format).
 
-#### Headers Requeridos
+#### Required Headers
 
 ```
-Authorization: Bearer <tu-token>
+Authorization: Bearer <your-token>
 Content-Type: application/json
 ```
 
@@ -113,16 +124,16 @@ Content-Type: application/json
 }
 ```
 
-| Campo | Tipo | Descripción | Requerido |
-|-------|------|-------------|-----------|
-| shipmentNumber | string | Número de envío, booking o contenedor | Sí |
-| carrier | string | Código del transportista | No |
-| type | string | Tipo de envío (booking, mbl, container) cuando es OCEAN y mawb cuando es AIR | Sí |
-| transportMode | string | Modo de transporte (AIR, OCEAN) | Sí |
-| originPort | string | Código de país de origen (2 caracteres ISO) - Opcional para embarques marítimos. Se usa para validar la ruta | No |
-| destinationPort | string | Código de país de destino (2 caracteres ISO) - Opcional para embarques marítimos. Se usa para validar la ruta | No |
+| Field | Type | Description | Required |
+|-------|------|-------------|----------|
+| shipmentNumber | string | Shipment, booking, or container number | Yes |
+| carrier | string | Carrier code | No |
+| type | string | Shipment type (booking, mbl, container) for OCEAN and mawb for AIR | Yes |
+| transportMode | string | Transport mode (AIR, OCEAN) | Yes |
+| originPort | string | Origin country code (2-character ISO) - Optional for ocean shipments. Used to validate the route | No |
+| destinationPort | string | Destination country code (2-character ISO) - Optional for ocean shipments. Used to validate the route | No |
 
-#### Response Exitosa (200 OK)
+#### Successful Response (200 OK)
 
 ```json
 {
@@ -133,9 +144,9 @@ Content-Type: application/json
 }
 ```
 
-#### Errores Posibles
+#### Possible Errors
 
-- **400 Bad Request** - Parámetros faltantes
+- **400 Bad Request** - Missing parameters
   ```json
   {
       "success": false,
@@ -146,19 +157,19 @@ Content-Type: application/json
   }
   ```
 
-- **400 Bad Request** - Información de tracking demasiado antigua
+- **400 Bad Request** - Tracking information too old
   ```json
   {
       "success": false,
       "error": {
           "code": 400,
           "message": "OUTDATED_INFORMATION",
-          "details": "La información de tracking encontrada es demasiado antigua (más de 80 días). Por favor verifique que la información enviada sea correcta y considere proporcionar la naviera para mayor precisión en la búsqueda."
+          "details": "The tracking information found is too old (more than 80 days). Please verify that the information sent is correct and consider providing the carrier."
       }
   }
   ```
 
-- **401 Unauthorized** - Token no proporcionado
+- **401 Unauthorized** - Token not provided
   ```json
   {
       "success": false,
@@ -170,7 +181,7 @@ Content-Type: application/json
   }
   ```
 
-- **403 Forbidden** - Token inválido
+- **403 Forbidden** - Invalid token
   ```json
   {
       "success": false,
@@ -182,29 +193,29 @@ Content-Type: application/json
   }
   ```
 
-### Obtener Embarque por ID
+### Get Shipment by ID
 
 **Endpoint:** `/getShipmentById`
 
-**Método:** `GET`
+**Method:** `GET`
 
-**Autenticación requerida:** Sí
+**Authentication required:** Yes
 
-**Descripción:** Obtiene la información completa de un embarque por su ID, incluyendo datos de tracking, fechas de milestones (ETA, ETD, ATA, ATD), información de la naviera y detalles de contenedores. El servicio verifica la autenticación mediante el token Bearer y extrae el companyId del mismo. Las fechas se devuelven en formato "YYYY-MM-DD HH:MM:SS" en zona horaria UTC-5.
+**Description:** Retrieves complete shipment information by ID, including tracking data, milestone dates (ETA, ETD, ATA, ATD), carrier information, and container details.
 
-#### Headers Requeridos
+#### Required Headers
 
 ```
-Authorization: Bearer <tu-token>
+Authorization: Bearer <your-token>
 ```
 
-#### Parámetros de consulta
+#### Query Parameters
 
-| Parámetro | Tipo | Descripción | Requerido |
-|-----------|------|-------------|-----------|
-| shipmentId | string | ID del embarque a consultar | Sí |
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| shipmentId | string | ID of the shipment to query | Yes |
 
-#### Response Exitosa (200 OK)
+#### Successful Response (200 OK)
 
 ```json
 {
@@ -223,7 +234,7 @@ Authorization: Bearer <tu-token>
         "atd": "2025-02-12 08:48:00",
         "portOfLoading": "Shanghai",
         "portOfDischarge": "Rotterdam",
-        "flag": "Panamá",
+        "flag": "Panama",
         "vessel": "MSC ANNA",
         "voyage": "VOY123",
         "locations": {
@@ -269,71 +280,71 @@ Authorization: Bearer <tu-token>
 }
 ```
 
-#### Errores Posibles
+#### Possible Errors
 
-- **400 Bad Request** - Parámetros faltantes
+- **400 Bad Request** - Missing parameters
   ```json
   {
       "success": false,
       "error": {
           "code": 400,
           "message": "MISSING_PARAMS",
-          "details": "Se requiere el parámetro shipmentId"
+          "details": "The shipmentId parameter is required"
       }
   }
   ```
 
-- **401 Unauthorized** - Token no proporcionado
+- **401 Unauthorized** - Token not provided
   ```json
   {
       "success": false,
       "error": {
           "code": 401,
           "message": "UNAUTHORIZED",
-          "details": "Un token de autenticación es requerido"
+          "details": "An authentication token is required"
       }
   }
   ```
 
-- **403 Forbidden** - Token sin companyId
+- **403 Forbidden** - Token missing companyId
   ```json
   {
       "success": false,
       "error": {
           "code": 403,
           "message": "FORBIDDEN",
-          "details": "El token proporcionado no contiene la información de compañía necesaria"
+          "details": "The provided token does not contain the necessary company information"
       }
   }
   ```
 
-- **404 Not Found** - Embarque no encontrado
+- **404 Not Found** - Shipment not found
   ```json
   {
       "success": false,
       "error": {
           "code": 404,
           "message": "SHIPMENT_NOT_FOUND",
-          "details": "No se encontró el embarque con el ID proporcionado"
+          "details": "The shipment with the provided ID was not found"
       }
   }
   ```
 
-- **405 Method Not Allowed** - Método no permitido
+- **405 Method Not Allowed** - Method not allowed
   ```json
   {
       "success": false,
       "error": {
           "code": 405,
           "message": "METHOD_NOT_ALLOWED",
-          "details": "El método HTTP utilizado no está permitido para este endpoint"
+          "details": "The HTTP method used is not allowed for this endpoint"
       }
   }
   ```
 
-## Manejo de Errores
+## Error Handling
 
-Todos los errores siguen una estructura consistente:
+All errors follow a consistent structure:
 
 ```json
 {
@@ -342,25 +353,25 @@ Todos los errores siguen una estructura consistente:
         "code": "number",
         "message": "string",
         "details": "string",
-        "errors": "array (opcional)"
+        "errors": "array (optional)"
     }
 }
 ```
 
-## Ejemplos
+## Examples
 
-### Ejemplo de Login
+### Login Example
 
 ```bash
 curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.net/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "email": "usuario@ejemplo.com",
-    "password": "contraseña123"
+    "email": "user@example.com",
+    "password": "password123"
 }'
 ```
 
-### Ejemplo de Crear Envío
+### Create Shipment Example
 
 ```bash
 curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.net/createShipmentWithTracking' \
@@ -376,14 +387,14 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
 }'
 ```
 
-### Ejemplo de Obtener Embarque por ID
+### Get Shipment by ID Example
 
 ```bash
 curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.net/getShipmentById/MwfBkld0pQAXoHvEBP1y' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs...'
 ```
 
-**Respuesta de ejemplo (Embarque Marítimo):**
+**Example response (Ocean Shipment):**
 
 ```json
 {
@@ -402,7 +413,7 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
         "atd": "2025-02-12T08:48:00",
         "portOfLoading": "Shanghai",
         "portOfDischarge": "Rotterdam",
-        "flag": "Panamá",
+        "flag": "Panama",
         "vessel": "MSC ANNA",
         "voyage": "VOY123",
         "locations": {
@@ -448,9 +459,9 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
 }
 ```
 
-### Ejemplo de Obtener Embarque Aéreo por ID
+### Get Air Shipment by ID Example
 
-**Respuesta de ejemplo:**
+**Example response:**
 
 ```json
 {
@@ -459,7 +470,7 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
         "id": "n1IP7703P31ISWDuNchE",
         "status": "BOOKING_REQUEST",
         "createdAt": "2025-04-08 11:55:13",
-       "eta": "2025-02-24T00:30:00",
+        "eta": "2025-02-24T00:30:00",
         "etd": "2025-02-12T08:48:00",
         "ata": "2025-02-24T00:30:00",
         "atd": "2025-02-12T08:48:00",
@@ -478,3 +489,8 @@ curl --location 'https://us-central1-kontroll-platform-qa-ba160.cloudfunctions.n
         "airportOfArrival": null
     }
 }
+```
+
+---
+
+**Last Updated:** May 14, 2026
